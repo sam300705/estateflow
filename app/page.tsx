@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { calculateOpenPipelineValue } from "../lib/crm/metrics";
 
 type Stage = "New" | "Contacted" | "Qualified" | "Visit Scheduled" | "Negotiation" | "Won" | "Lost";
 type Priority = "Hot" | "Warm" | "Cold";
@@ -46,7 +47,7 @@ export default function Home() {
     });
   }, [leads, search, stage]);
 
-  const pipelineValue = leads.filter((lead) => lead.stage !== "Lost").reduce((sum, lead) => sum + lead.budget, 0);
+  const pipelineValue = calculateOpenPipelineValue(leads);
   const hotLeads = leads.filter((lead) => lead.priority === "Hot" && lead.stage !== "Won" && lead.stage !== "Lost").length;
   const visits = leads.filter((lead) => lead.stage === "Visit Scheduled").length;
   const wins = leads.filter((lead) => lead.stage === "Won").length;
